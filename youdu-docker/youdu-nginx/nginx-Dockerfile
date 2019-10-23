@@ -5,7 +5,7 @@ MAINTAINER cuiyi "cuiyis@163.com"
 COPY ./youdu-docker/youdu-nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
 # ssl 配置，需要则打开
-# COPY ./youdu-docker/youdu-nginx/ssl.conf /etc/nginx/conf.d/ssl.conf
+# COPY ./youdu-docker/youdu-nginx/nginx.ssl.conf /etc/nginx/conf.d/default.conf
 # COPY ./youdu-docker/youdu-nginx/cert/youdushufang.com.pem /etc/nginx/cert/youdushufang.com.pem
 # COPY ./youdu-docker/youdu-nginx/cert/youdushufang.com.key /etc/nginx/cert/youdushufang.com.key
 
