@@ -62,3 +62,6 @@ jars/
 
 mvnw
 mvnw.cmd
+
+*.key
+*.pem
