@@ -10,14 +10,12 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080"
     volumes:
       - ~/.youdu/logs/nginx:/var/log/nginx
     depends_on:
       - youdu-server
       - youdu-fe-admin
       - youdu-fe
-      - youdu-pma
 
   youdu-mysql:
     container_name: youdu-mysql
@@ -44,8 +42,8 @@ services:
       dockerfile: ./youdu-docker/youdu-pma-Dockerfile
     links:
       - youdu-mysql:mysql
-    expose:
-      - "80"
+    ports:
+      - 8080:80
     environment:
       MYSQL_USERNAME: root
       MYSQL_PASSWORD: root
