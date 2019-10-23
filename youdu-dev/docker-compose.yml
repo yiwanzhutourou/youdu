@@ -1,0 +1,38 @@
+version: '3'
+services:
+  youdu-dev-mysql:
+    container_name: youdu-dev-mysql
+    build:
+      context: ./
+      dockerfile: ./youdu-dev-mysql/youdu-dev-mysql-Dockerfile
+    environment:
+      MYSQL_DATABASE: youdu
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      TZ: Asia/Shanghai
+    expose:
+      - "3306"
+    ports:
+      - 3306:3306
+    volumes:
+      - ~/.youdu/dev/mysql/mysql_data:/var/lib/mysql
+    restart: always
+
+  youdu-dev-pma:
+    container_name: youdu-dev-pma
+    build:
+      context: ./
+      dockerfile: ./youdu-dev-pma/youdu-dev-pma-Dockerfile
+    links:
+      - youdu-dev-mysql:mysql
+    ports:
+      - 8080:80
+    environment:
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+      PMA_HOST: mysql
+    depends_on:
+      - youdu-dev-mysql
+    restart: always

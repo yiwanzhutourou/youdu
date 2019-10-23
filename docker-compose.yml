@@ -1,0 +1,93 @@
+version: '3'
+services:
+  youdu-nginx:
+    container_name: youdu-nginx
+    build:
+      context: ./
+      dockerfile: ./youdu-docker/youdu-nginx/nginx-Dockerfile
+    environment:
+      TZ: Asia/Shanghai
+    ports:
+      - "80:80"
+    volumes:
+      - ~/.youdu/logs/nginx:/var/log/nginx
+    depends_on:
+      - youdu-server
+      - youdu-fe-admin
+      - youdu-fe
+
+  youdu-mysql:
+    container_name: youdu-mysql
+    build:
+      context: ./
+      dockerfile: ./youdu-docker/youdu-mysql/mysql-Dockerfile
+    environment:
+      MYSQL_DATABASE: youdu
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_HOST: '%'
+      TZ: Asia/Shanghai
+    expose:
+      - "3306"
+    ports:
+      - 3306:3306
+    volumes:
+      - ~/.youdu/mysql/mysql_data:/var/lib/mysql
+    restart: always
+
+  youdu-pma:
+    container_name: youdu-pma
+    build:
+      context: ./
+      dockerfile: ./youdu-docker/youdu-pma-Dockerfile
+    links:
+      - youdu-mysql:mysql
+    ports:
+      - 8080:80
+    environment:
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+      PMA_HOST: mysql
+    depends_on:
+      - youdu-mysql
+    restart: always
+
+  youdu-server:
+    container_name: youdu-server
+    build:
+      context: ./
+      dockerfile: ./youdu-docker/youdu-server-Dockerfile
+    working_dir: /app
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - ./youdu-server:/app
+      - ~/.m2:/root/.m2
+      - ~/.youdu/logs/server:/app/log
+      - ~/.youdu/upload:/root/.youdu/upload
+    expose:
+      - "9090"
+    command: mvn clean spring-boot:run -Dspring-boot.run.profiles=docker -Dmaven.test.skip=true
+    depends_on:
+      - youdu-mysql
+    restart: always
+
+  youdu-fe-admin:
+    container_name: youdu-fe-admin
+    build:
+      context: ./
+      dockerfile: ./youdu-docker/youdu-fe-admin/youdu-fe-admin-Dockerfile
+    environment:
+      TZ: Asia/Shanghai
+    expose:
+      - "3001"
+
+  youdu-fe:
+    container_name: youdu-fe
+    build:
+      context: ./
+      dockerfile: ./youdu-docker/youdu-fe/youdu-fe-Dockerfile
+    environment:
+      TZ: Asia/Shanghai
+    expose:
+      - "3000"
