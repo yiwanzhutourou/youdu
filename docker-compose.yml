@@ -17,6 +17,7 @@ services:
       - youdu-server
       - youdu-fe-admin
       - youdu-fe
+      - youdu-pma
 
   youdu-mysql:
     container_name: youdu-mysql
